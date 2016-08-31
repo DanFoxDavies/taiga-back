@@ -1,0 +1,23 @@
+### This script is not yet integrated with the Taiga install process, as of 31/08/2016 it is here for manual insertion.
+###
+### (to be put in /etc/systemd/system/ and systemctl enable'd)
+####taiga-celery.service:
+
+[Unit]
+ Description=Taiga's Async Task Engine
+ Wants=rabbitmq-server.service
+ Requires=rabbitmq-server.service
+
+
+[Service]
+ User=taiga
+ WorkingDirectory=/home/taiga/taiga-back
+ Environment=PATH=/home/taiga/.virtualenvs/taiga/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ Environment=PYTHONPATH=/home/taiga/.virtualenvs/taiga/lib/python3.4/site-packages
+ ExecStart=/home/taiga/.virtualenvs/taiga/bin/celery -A taiga worker -c 4
+ Restart=always
+ StandardOutput=syslog+console
+ StandardError=syslog+console
+
+[Install]
+ WantedBy=taiga.service

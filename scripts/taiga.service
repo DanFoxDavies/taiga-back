@@ -1,0 +1,22 @@
+### This script is not yet integrated with the Taiga install process, as of 31/08/2016 it is here for manual insertion.
+###
+### (to be put in /etc/systemd/system/ and systemctl enable'd)
+####taiga.service
+
+[Unit]
+ Description=Taiga's Backend Engine
+ Wants=taiga-celery.service taiga-events.service
+ Requires=taiga-celery.service taiga-events.service
+
+[Service]
+ User=taiga
+ WorkingDirectory=/home/taiga/taiga-back
+ Environment=PATH=/home/taiga/.virtualenvs/taiga/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ Environment=PYTHONPATH=/home/taiga/.virtualenvs/taiga/lib/python3.4/site-packages
+ ExecStart=/home/taiga/.virtualenvs/taiga/bin/gunicorn -w 3 -t 60 --pythonpath=. -b 192.168.2.133:8001 taiga.wsgi
+ Restart=always
+ StandardOutput=syslog+console
+ StandardError=syslog+console
+
+[Install]
+ WantedBy=multi-user.target
